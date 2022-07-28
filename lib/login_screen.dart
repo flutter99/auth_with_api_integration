@@ -1,48 +1,47 @@
-import 'dart:convert';
 import 'dart:ui';
+import 'dart:convert';
 
-import 'package:auth_with_api/login_screen.dart';
+import 'package:auth_with_api/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({Key? key}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
-
+class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  void _signup(String email, String password) async {
+  void _login(String email, String password) async {
+    try {
+      Response response =
+          await post(Uri.parse('https://reqres.in/api/login'), body: {
+        'email': email,
+        'password': password,
+      });
 
-    try{
-
-      Response response = await post(
-        Uri.parse('https://reqres.in/api/register'),
-
-        body: {
-          'email' : email,
-          'password' : password,
-        }
-      );
-
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
+        print(data);
         print('Token : ' + data['token'].toString());
 
-        print('Create Account Successfully!');
+        print('login Successfully!');
 
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
-
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(
+              tokenText: data['token'].toString(),
+            ),
+          ),
+        );
       } else {
-        print('Create Account Failed!');
+        print('login Failed!');
       }
-
-    }catch(e) {
+    } catch (e) {
       print(e.toString());
     }
   }
@@ -50,44 +49,46 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         elevation: 0.0,
         centerTitle: true,
-        title: const Text('Signup Screen',
+        title: const Text(
+          'Login Screen',
           style: TextStyle(
             fontSize: 18.0,
             color: Colors.white,
           ),
         ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
             TextFormField(
               controller: emailController,
               decoration: const InputDecoration(
                 hintText: 'Email Address',
               ),
             ),
-            const SizedBox(height: 20.0,),
+            const SizedBox(
+              height: 20.0,
+            ),
             TextFormField(
               controller: passwordController,
               decoration: const InputDecoration(
                 hintText: 'Password',
               ),
             ),
-
-            const SizedBox(height: 20.0,),
+            const SizedBox(
+              height: 20.0,
+            ),
             InkWell(
               borderRadius: BorderRadius.circular(8.0),
-              onTap: (){
-                _signup(emailController.text.toString(), passwordController.text.toString());
+              onTap: () {
+                _login(emailController.text.toString(),
+                    passwordController.text.toString());
               },
               child: Ink(
                 height: 50.0,
@@ -97,7 +98,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   color: Colors.cyan,
                 ),
                 child: const Center(
-                  child: Text('Sign up',
+                  child: Text(
+                    'Login',
                     style: TextStyle(
                       fontSize: 17.0,
                       color: Colors.white,
@@ -109,7 +111,6 @@ class _SignupScreenState extends State<SignupScreen> {
           ],
         ),
       ),
-
     );
   }
 }
