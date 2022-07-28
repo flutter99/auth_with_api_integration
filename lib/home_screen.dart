@@ -13,6 +13,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
 
+      appBar: AppBar(
+        centerTitle: true,
+        elevation: 0.0,
+        title: const Text('Home Screen',
+          style: TextStyle(
+            fontSize: 18.0,
+            color: Colors.white,
+          ),
+        ),
+      ),
+
       body: Center(
         child: Text('Welcome Token : ${widget.tokenText} '),
       ),
